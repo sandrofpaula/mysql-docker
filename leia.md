@@ -38,7 +38,53 @@ Agora, conecte cada um dos contêineres existentes (`mysql_dev`, `giiwizard-beta
 
 Com isso, todos os contêineres agora fazem parte da mesma rede `minha_rede_compartilhada` e podem se comunicar entre si.
 
-#### 3. **Configurar o Yii2 para Conectar ao MySQL**
+### 3. **Verificar Contêineres Conectados à Rede**
+
+Depois de conectar os contêineres à rede, você pode querer verificar quais contêineres estão realmente conectados à `minha_rede_compartilhada`. Para isso, use o seguinte comando:
+
+```bash
+docker network inspect minha_rede_compartilhada
+```
+
+Este comando retorna informações detalhadas sobre a rede, incluindo uma seção chamada `Containers`, que lista todos os contêineres conectados a ela.
+
+#### Exemplo de Saída:
+
+```json
+[
+    {
+        "Name": "minha_rede_compartilhada",
+        "Id": "1e5ef326ed0d...",
+        "Created": "2024-08-17T00:00:00.000000000Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "Containers": {
+            "c3a2d6e6f7f9": {
+                "Name": "mysql_dev",
+                "EndpointID": "3a3f2f5b...",
+                "MacAddress": "02:42:ac:11:00:02",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            },
+            "b6c831102717": {
+                "Name": "giiwizard-beta",
+                "EndpointID": "ab1f8c9a...",
+                "MacAddress": "02:42:ac:11:00:03",
+                "IPv4Address": "172.18.0.3/16",
+                "IPv6Address": ""
+            }
+        }
+    }
+]
+```
+
+- **Containers**: Esta seção lista todos os contêineres conectados à rede.
+  - **Name**: O nome do contêiner.
+  - **IPv4Address**: O endereço IP atribuído ao contêiner na rede.
+
+Com essas informações, você pode garantir que os contêineres que você conectou estão realmente na rede e prontos para se comunicar.
+
+### 4. **Configurar o Yii2 para Conectar ao MySQL**
 
 Agora que os contêineres estão na mesma rede, precisamos ajustar a configuração da conexão ao banco de dados no Yii2, tanto no `giiwizard-beta` quanto no `giiwizard`, para que eles usem o contêiner `mysql_dev` como servidor MySQL.
 
@@ -62,11 +108,10 @@ return [
    - `docker network connect minha_rede_compartilhada mysql_dev`
    - `docker network connect minha_rede_compartilhada giiwizard-beta`
    - `docker network connect minha_rede_compartilhada giiwizard`
-3. **Configure o Yii2 para usar o host `mysql_dev`** no `dsn` para se conectar ao banco de dados MySQL.
+3. **Verifique quais contêineres estão conectados**: `docker network inspect minha_rede_compartilhada`.
+4. **Configure o Yii2 para usar o host `mysql_dev`** no `dsn` para se conectar ao banco de dados MySQL.
 
 Com esses passos, os contêineres `giiwizard-beta` e `giiwizard` poderão se conectar ao banco de dados MySQL rodando no contêiner `mysql_dev`, permitindo que eles se comuniquem sem problemas!
-
----
 
 ### Listar Todas as Redes Docker Existentes
 
@@ -77,31 +122,6 @@ docker network ls
 ```
 
 Este comando exibirá uma lista de todas as redes Docker, incluindo as redes padrão e quaisquer redes personalizadas que você tenha criado.
-
-### Como Funciona:
-
-- **`docker network ls`**: Lista todas as redes Docker disponíveis no sistema.
-
-### Exemplo de Saída:
-
-Após executar o comando, você verá uma lista parecida com esta:
-
-```bash
-NETWORK ID     NAME                            DRIVER    SCOPE
-1e5ef326ed0d   bridge                          bridge    local
-5625c49780dd   minha_rede_compartilhada        bridge    local
-847ca6374f70   host                            host      local
-9b31797cb726   none                            null      local
-```
-
-- **NETWORK ID**: O identificador único da rede.
-- **NAME**: O nome da rede.
-- **DRIVER**: O driver de rede (por exemplo, `bridge`, `host`, `null`).
-- **SCOPE**: O escopo da rede (normalmente `local`).
-
-Esse comando é útil para verificar as redes disponíveis e gerenciar a conectividade entre seus contêineres Docker.
-
----
 
 ### Como Apagar uma Rede Docker
 
@@ -115,25 +135,9 @@ docker network rm <nome_da_rede>
 
 Substitua `<nome_da_rede>` pelo nome da rede que você deseja apagar.
 
-### Passos:
-
-1. **Liste as redes Docker para encontrar o nome da rede que deseja apagar**:
-
-   ```bash
-   docker network ls
-   ```
-
-2. **Apague a rede**:
-
-   Por exemplo, se você quiser apagar a rede `minha_rede_compartilhada`:
-
-   ```bash
-   docker network rm minha_rede_compartilhada
-   ```
-
 ### Observações:
 
-- Você não pode remover uma rede que está sendo usada por contêineres. Se houver contêineres conectados à rede, você precisará primeiro desconectar ou parar esses contêineres antes de remover a rede.
+- Você não pode remover uma rede que está sendo usada por contêineres. Se houver contêineres conectados à rede, você precisará primeiro desconectá-los ou parar esses contêineres antes de remover a rede.
 - Para desconectar um contêiner de uma rede, use:
 
   ```bash
@@ -146,6 +150,4 @@ Substitua `<nome_da_rede>` pelo nome da rede que você deseja apagar.
   docker network disconnect minha_rede_compartilhada giiwizard-beta
   ```
 
-Depois de remover a rede, ela não estará mais disponível para conexão de contêineres.
-
-Se precisar de mais ajuda ou informações, estou à disposição!
+Depois de remover a rede, ela não estará mais disponível para conexão de contêineres. Se precisar de mais ajuda ou informações, estou à disposição!
