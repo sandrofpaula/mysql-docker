@@ -194,3 +194,72 @@ Se você quiser ver uma visão geral de todos os containers conectados a uma net
 ```bash
 docker network inspect <network_name>
 ```
+
+###### Ajustar o mapeamento de portas de um contêiner Docker
+Você pode ajustar o mapeamento de portas de um contêiner Docker existente sem precisar apagar e recriar o contêiner, mas isso envolve alguns passos manuais, pois o Docker não permite diretamente remapear as portas de um contêiner já criado.
+
+Aqui está o processo que você pode seguir:
+
+1. **Pare o contêiner existente:**
+
+   Primeiro, pare o contêiner MySQL existente:
+
+   ```bash
+   docker stop mysql_dev
+   ```
+
+2. **Renomeie ou remova o contêiner existente (opcional):**
+
+   Para evitar conflitos, você pode renomear o contêiner existente ou removê-lo (apenas o contêiner, não os dados):
+
+   **Renomear:**
+   ```bash
+   docker rename mysql_dev mysql_dev_old
+   ```
+
+   **Remover o contêiner (mantendo os dados no volume):**
+   ```bash
+   docker rm mysql_dev
+   ```
+
+3. **Inicie um novo contêiner com a nova configuração de porta:**
+
+   Use o comando abaixo para iniciar um novo contêiner usando a nova configuração de portas:
+
+   ```bash
+   docker run -d --name mysql_dev -p 37:3306 \
+   -e MYSQL_ROOT_PASSWORD='suaSenhaSegura' \
+   -v mysql_data:/var/lib/mysql \
+   mysql:8.0
+   ```
+
+   - **`-p 37:3306`**: Mapeia a porta 37 no host para a porta 3306 no contêiner.
+   - **`-v mysql_data:/var/lib/mysql`**: Monta o volume de dados existente para garantir que seus dados MySQL não sejam perdidos.
+   - **`--name mysql_dev`**: Nomeia o novo contêiner como `mysql_dev`.
+
+4. **Verifique se o contêiner está em execução:**
+
+   Confirme que o novo contêiner está em execução e que a porta foi mapeada corretamente:
+
+   ```bash
+   docker ps
+   ```
+
+   Isso deve mostrar o contêiner `mysql_dev` com a porta 37 mapeada para 3306.
+
+### Alternativa: Docker Compose
+
+Se você está usando `docker-compose`, apenas atualize o arquivo `docker-compose.yml` com a nova configuração:
+
+```yaml
+ports:
+  - "37:3306"
+```
+
+Depois, aplique as mudanças sem recriar os volumes:
+
+```bash
+docker-compose up -d --force-recreate --no-deps mysql
+```
+
+Isso recriará o contêiner `mysql` com a nova configuração de portas, mantendo os dados intactos.
