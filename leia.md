@@ -98,3 +98,80 @@ NETWORK ID     NAME                            DRIVER    SCOPE
 - **none**: Desativa o networking para o contêiner, criando apenas a interface de loopback.
 
 Isso deve ajudar a identificar e gerenciar as redes Docker no seu ambiente. Se precisar de mais alguma coisa, é só avisar!
+
+
+### listar todas as redes Docker existentes
+O comando para listar todas as redes Docker existentes no seu ambiente é:
+
+```bash
+docker network ls
+```
+
+Este comando exibirá uma lista de todas as redes Docker, incluindo redes padrão e quaisquer redes personalizadas que você tenha criado.
+
+### Como Funciona:
+
+- **`docker network ls`**: Lista todas as redes Docker disponíveis no sistema.
+
+### Exemplo de Saída:
+
+Após executar o comando, você verá uma lista parecida com esta:
+
+```bash
+NETWORK ID     NAME                            DRIVER    SCOPE
+1e5ef326ed0d   bridge                          bridge    local
+5625c49780dd   minha_rede_compartilhada        bridge    local
+847ca6374f70   host                            host      local
+9b31797cb726   none                            null      local
+```
+
+- **NETWORK ID**: O identificador único da rede.
+- **NAME**: O nome da rede.
+- **DRIVER**: O driver de rede (por exemplo, `bridge`, `host`, `null`).
+- **SCOPE**: O escopo da rede (normalmente `local`).
+
+Esse comando é útil para verificar as redes disponíveis e gerenciar a conectividade entre seus contêineres Docker.
+
+### apagar uma rede Docker
+Para apagar uma rede Docker, você pode usar o comando `docker network rm`. Esse comando permite que você remova uma rede específica.
+
+### Comando para Apagar uma Rede Docker
+
+```bash
+docker network rm <nome_da_rede>
+```
+
+Substitua `<nome_da_rede>` pelo nome da rede que você deseja apagar.
+
+### Passos:
+
+1. **Liste as redes Docker para encontrar o nome da rede que deseja apagar**:
+
+   ```bash
+   docker network ls
+   ```
+
+2. **Apague a rede**:
+
+   Por exemplo, se você quiser apagar a rede `minha_rede_compartilhada`:
+
+   ```bash
+   docker network rm minha_rede_compartilhada
+   ```
+
+### Observações:
+
+- Você não pode remover uma rede que está sendo usada por contêineres. Se houver contêineres conectados à rede, você precisará primeiro desconectar ou parar esses contêineres antes de remover a rede.
+- Para desconectar um contêiner de uma rede, use:
+
+  ```bash
+  docker network disconnect <nome_da_rede> <nome_do_container>
+  ```
+
+  Exemplo:
+
+  ```bash
+  docker network disconnect minha_rede_compartilhada giiwizard-beta
+  ```
+
+Depois de remover a rede, ela não estará mais disponível para conexão de contêineres. Se precisar de mais ajuda ou informações, estou à disposição!
