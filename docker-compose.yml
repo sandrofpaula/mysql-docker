@@ -11,7 +11,7 @@ services: # Inicia a definição dos serviços que o Docker Compose irá gerenci
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes' # Permite que o MySQL funcione com uma senha vazia para o usuário root.
 
     ports: # Configura o mapeamento de portas entre o contêiner e o host.
-      - "37:3306" # Mapeia a porta 3306 do contêiner (porta padrão do MySQL) para a porta 3306 no host. Isso permite que o MySQL seja acessado externamente.
+      - "3306:3306" # Mapeia a porta 3306 do contêiner (porta padrão do MySQL) para a porta 3306 no host. Isso permite que o MySQL seja acessado externamente.
 
     volumes: # Define volumes para persistência de dados. Volumes permitem que os dados sejam armazenados fora do contêiner, garantindo que eles sobrevivam a reinicializações e recriações do contêiner.
       - mysql_data:/var/lib/mysql # Mapeia o volume nomeado `mysql_data` para o diretório `/var/lib/mysql` dentro do contêiner, onde o MySQL armazena seus dados.
