@@ -151,3 +151,46 @@ Substitua `<nome_da_rede>` pelo nome da rede que você deseja apagar.
   ```
 
 Depois de remover a rede, ela não estará mais disponível para conexão de contêineres. Se precisar de mais ajuda ou informações, estou à disposição!
+
+
+### Para descobrir a qual network um container pertence no Docker
+
+Para descobrir a qual network um container pertence no Docker, você pode usar o comando `docker inspect`. Aqui estão as etapas para verificar essa informação:
+
+1. **Listar os containers em execução:**
+
+   ```bash
+   docker ps
+   ```
+
+   Isso listará todos os containers em execução com seus IDs e nomes.
+
+2. **Inspecionar um container específico para ver as networks associadas:**
+
+   ```bash
+   docker inspect <container_id_or_name>
+   ```
+
+   Substitua `<container_id_or_name>` pelo ID ou nome do container que você deseja inspecionar.
+
+3. **Filtrar apenas as informações da network:**
+
+   Para extrair apenas as informações relacionadas à network, você pode usar `grep` ou `jq`. Por exemplo:
+
+   ```bash
+   docker inspect <container_id_or_name> | grep -i "network"
+   ```
+
+   Ou, se você tiver o `jq` instalado:
+
+   ```bash
+   docker inspect <container_id_or_name> | jq '.[0].NetworkSettings.Networks'
+   ```
+
+   Isso mostrará as networks às quais o container está conectado, bem como o nome das networks.
+
+Se você quiser ver uma visão geral de todos os containers conectados a uma network específica, pode usar:
+
+```bash
+docker network inspect <network_name>
+```
