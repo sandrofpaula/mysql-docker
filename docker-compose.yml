@@ -1,0 +1,39 @@
+version: '3.8' # Define a versão do Docker Compose. A versão 3.8 é compatível com a maioria dos recursos modernos do Docker Compose.
+
+services: # Inicia a definição dos serviços que o Docker Compose irá gerenciar. Um serviço é essencialmente um contêiner ou um grupo de contêineres relacionados.
+  
+  mysql: # Define o serviço MySQL.
+    image: mysql:8.0 # Especifica a imagem do MySQL a ser usada, neste caso, a versão 8.0.
+    container_name: mysql_dev # Define o nome do contêiner para facilitar a identificação no Docker.
+
+    environment: # Define variáveis de ambiente que configuram o comportamento do contêiner.
+      MYSQL_ROOT_PASSWORD: '' # Define a senha para o usuário root do MySQL. Aqui está vazio, o que significa que o usuário root não terá senha.
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes' # Permite que o MySQL funcione com uma senha vazia para o usuário root.
+
+    ports: # Configura o mapeamento de portas entre o contêiner e o host.
+      - "3306:3306" # Mapeia a porta 3306 do contêiner (porta padrão do MySQL) para a porta 3306 no host. Isso permite que o MySQL seja acessado externamente.
+
+    volumes: # Define volumes para persistência de dados. Volumes permitem que os dados sejam armazenados fora do contêiner, garantindo que eles sobrevivam a reinicializações e recriações do contêiner.
+      - mysql_data:/var/lib/mysql # Mapeia o volume nomeado `mysql_data` para o diretório `/var/lib/mysql` dentro do contêiner, onde o MySQL armazena seus dados.
+
+    networks: # Define as redes em que o serviço estará conectado. Redes permitem a comunicação entre contêineres.
+      - my_network # Conecta o serviço `mysql` à rede `my_network`, facilitando a comunicação com outros contêineres na mesma rede.
+
+    command: --default-authentication-plugin=mysql_native_password # Executa um comando específico no início do contêiner, configurando o MySQL para usar o plugin de autenticação nativo (`mysql_native_password`). Isso é importante para manter a compatibilidade com versões anteriores e clientes mais antigos.
+
+volumes: # Define volumes nomeados que podem ser compartilhados entre diferentes contêineres e serviços.
+  mysql_data: # Define o volume `mysql_data`.
+    driver: local # Especifica que o volume será armazenado localmente no host, utilizando o driver padrão.
+
+networks: # Define redes nomeadas que podem ser usadas pelos serviços.
+  my_network: # Define a rede `my_network`.
+    driver: bridge # Usa o driver `bridge`, que é o padrão para criar uma rede interna no Docker. Esta rede é isolada e permite que os contêineres se comuniquem entre si.
+
+# docker-compose up -d 
+# docker-compose up --build -d
+
+
+# docker-compose down
+
+# Acesse o MySQL dentro do contêiner:
+# docker exec -it mysql_dev mysql -u root
