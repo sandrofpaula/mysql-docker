@@ -37,3 +37,4 @@ networks: # Define redes nomeadas que podem ser usadas pelos serviços.
 
 # Acesse o MySQL dentro do contêiner:
 # docker exec -it mysql_dev mysql -u root
+# show databases;
