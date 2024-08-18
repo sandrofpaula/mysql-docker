@@ -1,7 +1,3 @@
-Aqui está o texto ajustado para ficar mais coerente e explicativo:
-
----
-
 ## Conectando Contêineres Docker para Comunicação entre si
 
 Para conectar seus contêineres Docker `mysql_dev`, `giiwizard-beta`, e `giiwizard` para que eles possam se comunicar entre si, utilizaremos uma rede Docker compartilhada. Vou guiar você passo a passo.
